@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,36 +17,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        // Basic Identity
-        'first_name',
-        'last_name',
-        'name',
-        'email',
-        'password',
-
-        // Profile Info
-        'photo',
-        'phone',
-        'address',
-        'city',
-        'country',
-        'gender',
-        'status',
-
-        // Professional Info
-        'bio',
-        'job_title',
-        'department',
-        'experience',
-        'skills',
-        'website',
-
-        // Optional DOB
-        'day',
-        'month',
-        'year',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -59,17 +31,17 @@ class User extends Authenticatable
 
     // Helper methods for role checking
 
-    public function isAdmin(): bool
+    public function isAdmin()
     {
         return $this->role === 'admin';
     }
 
-    public function isInstructor(): bool
+    public function isInstructor()
     {
         return $this->role === 'instructor';
     }
 
-    public function isUser(): bool
+    public function isUser()
     {
         return $this->role === 'user';
     }

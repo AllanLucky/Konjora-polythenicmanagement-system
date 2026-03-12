@@ -5,22 +5,38 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string  $role
+     * @return mixed
      */
-
-    public function handle(Request $request, Closure $next, string $role): Response
-    
+    public function handle(Request $request, Closure $next, $role)
     {
-        if(Auth::check() && Auth::user()->role === $role){
-            return $next($request);
+        $user = Auth::user();
+
+        // Not logged in
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Please login first.');
         }
-       abort(403, 'Unauthorized action.');
+
+        // Account inactive
+        if ($user->status != 1) {
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'Your account is inactive.');
+        }
+
+        // Role mismatch
+        if ($user->role !== $role) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // All good, proceed
+        return $next($request);
     }
 }

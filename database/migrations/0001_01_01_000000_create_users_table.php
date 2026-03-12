@@ -13,41 +13,29 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-
-            // Basic Identity Information
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-
-            // Profile Information
-            $table->string('photo')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('country')->nullable();
-            $table->enum('gender', ['male', 'female', 'other'])->default('male');
-
-            // Role & Status
-            $table->enum('role', ['admin', 'instructor', 'user'])->default('user');
-            $table->enum('status', ['active', 'inactive'])->default('active');
-
-            // Professional Information
-            $table->longText('bio')->nullable();       // About Me
-            $table->string('job_title')->nullable();   // System Administrator, Developer
-            $table->string('department')->nullable();  // IT Department
-            $table->string('experience')->nullable();  // 5 years, Senior Developer
-            $table->string('skills')->nullable();      // Laravel, Security, User Management
-            $table->string('website')->nullable();     // LinkedIn / Portfolio
-
-            // Dates (Optional)
-            $table->integer('day')->nullable();
-            $table->integer('month')->nullable();
-            $table->integer('year')->nullable();
-
-            // System
+            $table->string('photo')->nullable(); // Profile image
+            $table->string('phone')->nullable(); // Phone
+            $table->string('address')->nullable(); // Address
+            $table->string('city')->nullable(); // City
+            $table->string('country')->nullable(); // Country
+            $table->enum('gender', ['male', 'female'])->default('male'); // Gender
+            $table->longText('experience')->nullable(); // Experience
+            $table->string('job_title')->nullable(); // Job Title
+            $table->string('department')->nullable(); // Department
+            $table->text('skills')->nullable(); // Skills
+            $table->string('website')->nullable(); // Website / LinkedIn
+            $table->longText('bio')->nullable(); // Bio
+            $table->enum('role', ['user', 'instructor', 'admin'])->default('user'); // Role
+            $table->enum('status', ['0', '1'])->default('1'); // Active/Inactive
+            $table->integer('day')->nullable(); // Day of birth
+            $table->string('month')->nullable(); // Month of birth
+            $table->integer('year')->nullable(); // Year of birth
             $table->rememberToken();
             $table->timestamps();
         });
@@ -78,4 +66,3 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
     }
 };
-

@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 
 class UserTableSeeder extends Seeder
 {
@@ -14,90 +13,84 @@ class UserTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $now = Carbon::now();
-
         DB::table('users')->insert([
             [
-                'first_name' => 'Admin',
-                'last_name'  => 'User',
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
-                'email_verified_at' => $now,
                 'password' => Hash::make('password'),
-
                 'photo' => null,
-                'phone' => '0700000001',
-                'address' => 'Admin Address',
-                'city' => 'Nairobi',
-                'country' => 'Kenya',
+                'phone' => '1234567890',
+                'address' => '123 Admin Street',
+                'city' => 'Admin City',
+                'country' => 'Adminland',
                 'gender' => 'male',
-
-                'bio' => 'System administrator responsible for managing platform operations and ensuring security.',
+                'experience' => '10+ years in system administration',
                 'job_title' => 'System Administrator',
                 'department' => 'IT Department',
-                'skills' => 'Laravel, Security, User Management',
+                'skills' => 'Laravel, Management, Security',
                 'website' => 'https://linkedin.com/in/adminuser',
-
+                'bio' => 'Enter your bio here',
+                'day' => 1,
+                'month' => 'January',
+                'year' => 1985,
                 'role' => 'admin',
-                'status' => 'active',
-
-                'created_at' => $now,
-                'updated_at' => $now,
+                'status' => '1',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'first_name' => 'Instructor',
-                'last_name'  => 'User',
+                'first_name' => 'John',
+                'last_name' => 'Instructor',
                 'name' => 'Instructor User',
                 'email' => 'instructor@example.com',
-                'email_verified_at' => $now,
                 'password' => Hash::make('password'),
-
                 'photo' => null,
-                'phone' => '0700000002',
-                'address' => 'Instructor Address',
-                'city' => 'Mombasa',
-                'country' => 'Kenya',
-                'gender' => 'female',
-
-                'bio' => 'Instructor focused on delivering practical technical education and mentorship.',
-                'job_title' => 'Senior Instructor',
-                'department' => 'Software Development',
-                'experience' => '5 years, Senior Developer',
-                'skills' => 'Laravel, Vue.js, Teaching',
+                'phone' => '0987654321',
+                'address' => '456 Instructor Avenue',
+                'city' => 'Instructor City',
+                'country' => 'Instructoria',
+                'gender' => 'male',
+                'experience' => '5+ years in teaching',
+                'job_title' => 'Instructor',
+                'department' => 'Education',
+                'skills' => 'Teaching, Laravel, PHP',
                 'website' => 'https://linkedin.com/in/instructoruser',
-
+                'bio' => 'Enter your bio here',
+                'day' => 15,
+                'month' => 'March',
+                'year' => 1990,
                 'role' => 'instructor',
-                'status' => 'active',
-
-                'created_at' => $now,
-                'updated_at' => $now,
+                'status' => '1',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'first_name' => 'Normal',
-                'last_name'  => 'User',
-                'name' => 'Normal User',
+                'first_name' => 'Jane',
+                'last_name' => 'User',
+                'name' => 'Regular User',
                 'email' => 'user@example.com',
-                'email_verified_at' => $now,
                 'password' => Hash::make('password'),
-
                 'photo' => null,
-                'phone' => '0700000003',
-                'address' => 'User Address',
-                'city' => 'Kisumu',
-                'country' => 'Kenya',
-                'gender' => 'other',
-
-                'bio' => 'Motivated learner exploring modern web technologies.',
-                'job_title' => 'Student',
-                'department' => 'Computer Science',
-                'skills' => 'HTML, CSS, JavaScript',
-                'website' => null,
-
+                'phone' => '5555555555',
+                'address' => '789 User Lane',
+                'city' => 'User City',
+                'country' => 'Userland',
+                'gender' => 'female',
+                'experience' => '2+ years in administration',
+                'job_title' => 'Manager',
+                'department' => 'Operations',
+                'skills' => 'Management, Coordination',
+                'website' => 'https://linkedin.com/in/userprofile',
+                'bio' => 'Enter your bio here',
+                'day' => 20,
+                'month' => 'June',
+                'year' => 1995,
                 'role' => 'user',
-                'status' => 'active',
-
-                'created_at' => $now,
-                'updated_at' => $now,
+                'status' => '1',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
     }

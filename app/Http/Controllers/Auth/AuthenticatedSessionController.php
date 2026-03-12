@@ -24,35 +24,40 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        $credentials = $request->only('email', 'password');
 
-        $request->session()->regenerate();
+        // Attempt login using default web guard
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        // All logic for redirecting to intended route after login
+            $user = Auth::user();
 
-        $user = $request->user();
+            // Redirect based on role
+            switch ($user->role) {
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+                case 'instructor':
+                    return redirect()->route('instructor.dashboard');
+                default:
+                    return redirect()->route('user.dashboard');
+            }
+        }
 
-    if ($user->isAdmin()) {
-        return redirect()->intended(route('admin.dashboard')); 
-    } elseif ($user->isInstructor()) {
-        return redirect()->intended(route('instructor.dashboard'));
-    } elseif ($user->isUser()) {
-        return redirect()->intended(route('user.dashboard'));
+        // Login failed
+        return back()->withErrors([
+            'email' => 'Invalid credentials or inactive account.',
+        ]);
     }
 
-    return redirect()->intended(route('dashboard'));
-}
-
     /**
-     * 
      * Destroy an authenticated session.
-     */ 
+     */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        // Logout the user from the default web guard
+        Auth::logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');

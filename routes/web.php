@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\admin\InfoController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\backend\AdminController;
 use App\Http\Controllers\backend\AdminInstructorController;
@@ -15,104 +14,109 @@ use App\Http\Controllers\backend\SliderController;
 use App\Http\Controllers\backend\SubCategoryController;
 use App\Http\Controllers\frontend\FrontendDashboardController;
 use App\Http\Controllers\LectureController;
+use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Dashboard Route
+|--------------------------------------------------------------------------
+*/
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
-/* Admin Login Route */
-
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')->name('admin.')->group(function () {
-
-    // Public Routes (no auth required)
     Route::get('/login', [AdminController::class, 'login'])->name('login');
 
-    // Protected Routes (auth + email verified + admin role)
     Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
-
-        // Dashboard
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 
-        // Profile Routes
+        // Profile & Password
         Route::get('/profile', [AdminProfileController::class, 'profile'])->name('profile');
         Route::post('/profile/store', [AdminProfileController::class, 'store'])->name('profile.store');
         Route::get('/settings', [AdminProfileController::class, 'settings'])->name('settings');
-
-        // Password Routes
         Route::get('/password/settings', [AdminProfileController::class, 'showPasswordForm'])->name('passwordSettings');
         Route::post('/password/settings', [AdminProfileController::class, 'passwordSettings'])->name('passwordSettings.store');
 
-        // Category Management Routes
-        Route::resource('category', CategoryController::class);
-        Route::resource('subcategory', SubCategoryController::class);
-        Route::resource('slider', SliderController::class);
-        Route::resource('info', InfoController::class);
+        // Resource Management
+        Route::resources([
+            'category' => CategoryController::class,
+            'subcategory' => SubCategoryController::class,
+            'slider' => SliderController::class,
+            'info' => InfoController::class,
+            'instructor' => AdminInstructorController::class,
+        ]);
 
-
-    Route::resource('instructor', AdminInstructorController::class);
-    Route::post('/update-status', [AdminInstructorController::class, 'updateStatus'])->name('instructor.status');
-    Route::get('/instructor-active-list', [AdminInstructorController::class, 'instructorActive'])->name('instructor.active');
-
+        // Additional Instructor Management
+        Route::post('/update-status', [AdminInstructorController::class, 'updateStatus'])->name('instructor.status');
+        Route::get('/instructor-active-list', [AdminInstructorController::class, 'instructorActive'])->name('instructor.active');
     });
 });
 
-
-// Instructor Routes
-
+/*
+|--------------------------------------------------------------------------
+| Instructor Routes
+|--------------------------------------------------------------------------
+*/
 Route::prefix('instructor')->name('instructor.')->group(function () {
-
-    // Public Routes (No auth needed)
     Route::get('/login', [InstructorController::class, 'login'])->name('login');
 
-    // Protected Routes (auth + instructor role)
     Route::middleware(['auth', 'role:instructor'])->group(function () {
         Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
         Route::post('/logout', [InstructorController::class, 'logout'])->name('logout');
 
-        // Profile Routes
+        // Profile & Password
         Route::get('/profile', [InstructorProfileController::class, 'profile'])->name('profile');
         Route::post('/profile/store', [InstructorProfileController::class, 'store'])->name('profile.store');
         Route::get('/settings', [InstructorProfileController::class, 'settings'])->name('settings');
-
-        // Password Routes
         Route::get('/password/settings', [InstructorProfileController::class, 'showPasswordForm'])->name('passwordSettings');
         Route::post('/password/settings', [InstructorProfileController::class, 'passwordSettings']);
 
-        // Manage Courses
-      Route::resource('course', CourseController::class);
-      Route::resource('course-section', CourseSectionController::class);
-      Route::resource('lecture', LectureController::class);
-      Route::get('/get-subcategories/{categoryId}', [CategoryController::class, 'getSubcategories']);
-       
+        // Course Management
+        Route::resources([
+            'course' => CourseController::class,
+            'course-section' => CourseSectionController::class,
+            'lecture' => LectureController::class,
+        ]);
 
-
+        // Dynamic Subcategories
+        Route::get('/get-subcategories/{categoryId}', [CategoryController::class, 'getSubcategories'])->name('get.subcategories');
     });
 });
 
-
-
-// Normal user dashboard
-Route::middleware(['auth:web', 'role:user'])->group(function () {
-    // Route::get('/user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+/*
+|--------------------------------------------------------------------------
+| User Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/user/dashboard', [FrontendDashboardController::class, 'userDashboard'])->name('user.dashboard');
 });
 
-// Frontend Routes
-
+/*
+|--------------------------------------------------------------------------
+| Frontend Routes
+|--------------------------------------------------------------------------
+*/
 Route::get('/', [FrontendDashboardController::class, 'home'])->name('frontend.home');
 Route::get('/course-details/{slug}', [FrontendDashboardController::class, 'courseDetails'])->name('frontend.course.details');
 
-
-
-
-
+/*
+|--------------------------------------------------------------------------
+| Authenticated Profile Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-
+/* Auth Routes */
 require __DIR__.'/auth.php';

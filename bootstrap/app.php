@@ -1,23 +1,47 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use App\Http\Middleware\RoleMiddleware;
-use Illuminate\Foundation\Configuration\Exceptions;
+use App\Exceptions\Handler;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Configuration\Exceptions;
 
 return Application::configure(basePath: dirname(__DIR__))
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routing Configuration
+    |--------------------------------------------------------------------------
+    */
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
 
-    $middleware->alias([
-        'role' => RoleMiddleware::class,
-    ]);
-       
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware Configuration
+    |--------------------------------------------------------------------------
+    */
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'role' => RoleMiddleware::class,
+        ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exception Configuration
+    |--------------------------------------------------------------------------
+    */
+    ->withExceptions(function (Exceptions $exceptions) {
+        // Instead of passing Handler::class, use a callback if needed
+        $exceptions->reportable(function (Throwable $e) {
+            // Optionally delegate to Handler or log exceptions
+            // Example: you can call custom logic from App\Exceptions\Handler here
+            (new Handler(app()))->report($e);
+        });
+    })
+
+    ->create();
